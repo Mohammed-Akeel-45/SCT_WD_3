@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaun Banega Crorepati - Interactive Quiz</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="kbc-logo">
+            <h1>🏆 KAUN BANEGA CROREPATI 🏆</h1>
+        </div>
+
+        <!-- Start Screen -->
+        <div class="start-screen" id="startScreen">
+            <h2>Welcome to the Ultimate Quiz Challenge!</h2>
+            <p>Answer 15 questions and win up to ₹1 Crore!</p>
+            <p>Difficulty increases with each question</p>
+            <button class="start-btn" onclick="startGame()">🎮 Start Game</button>
+        </div>
+
+        <!-- Main Game Layout -->
+        <div class="game-layout" id="gameLayout">
+            <!-- Prize Ladder -->
+            <div class="prize-ladder">
+                <h3>💰 Prize Money</h3>
+                <div id="prizeLadder"></div>
+            </div>
+
+            <!-- Quiz Area -->
+            <div class="quiz-main">
+                <div class="question-header">
+                    <div class="question-number" id="questionNumber">Question 1 of 15</div>
+                    <div class="current-prize" id="currentPrize">Playing for: ₹1,000</div>
+                </div>
+
+                <div class="loading" id="loadingScreen" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <p>Loading next question...</p>
+                </div>
+
+                <div id="questionContainer">
+                    <div class="question-text" id="questionText">
+                        Loading question...
+                    </div>
+
+                    <div class="answers-grid" id="answersGrid">
+                    </div>
+
+                    <div class="lifelines" id="lifelines">
+                        <button class="lifeline" id="fiftyFifty" onclick="useFiftyFifty()">
+                            50:50
+                        </button>
+                        <button class="lifeline" id="audiencePoll" onclick="useAudiencePoll()">
+                            👥 Audience Poll
+                        </button>
+                        <button class="lifeline" id="phoneAFriend" onclick="usePhoneAFriend()">
+                            📞 Phone a Friend
+                        </button>
+                    </div>
+
+                    <div class="controls">
+                        <button class="final-answer-btn" id="finalAnswerBtn" onclick="submitAnswer()" disabled>
+                            🔒 Final Answer
+                        </button>
+                        <button class="next-btn" id="nextBtn" onclick="nextQuestion()" style="display: none;">
+                            Next Question ➡️
+                        </button>
+                    </div>
+
+                    <div id="answerReveal"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Win Screen -->
+        <div class="win-screen" id="winScreen">
+            <h1>🎉 CONGRATULATIONS! 🎉</h1>
+            <div class="final-prize" id="winPrize">You won ₹1,00,00,000!</div>
+            <p>You are now a CROREPATI!</p>
+            <button class="restart-btn" onclick="restartGame()">Play Again</button>
+        </div>
+
+        <!-- Lose Screen -->
+        <div class="lose-screen" id="loseScreen">
+            <h1>😔 Game Over</h1>
+            <div class="final-prize" id="losePrize">You take home: ₹0</div>
+            <p id="loseMessage">Better luck next time!</p>
+            <button class="restart-btn" onclick="restartGame()">Try Again</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
