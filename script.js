@@ -1,23 +1,22 @@
-// Prize money ladder (in rupees) - KBC Style
+
 const prizeMoneyLadder = [
     { amount: 1000, safe: false },
     { amount: 2000, safe: false },
     { amount: 3000, safe: false },
     { amount: 5000, safe: false },
-    { amount: 10000, safe: true },     // First safe haven
+    { amount: 10000, safe: true },     
     { amount: 20000, safe: false },
     { amount: 40000, safe: false },
     { amount: 80000, safe: false },
     { amount: 160000, safe: false },
-    { amount: 320000, safe: true },    // Second safe haven
+    { amount: 320000, safe: true },    
     { amount: 640000, safe: false },
     { amount: 1250000, safe: false },
     { amount: 2500000, safe: false },
     { amount: 5000000, safe: false },
-    { amount: 10000000, safe: false }  // 1 Crore
+    { amount: 10000000, safe: false } 
 ];
 
-// Fallback questions for each difficulty level
 const fallbackQuestions = {
     easy: [
         {
@@ -122,7 +121,6 @@ function startGame() {
     gameActive = true;
     usedQuestions.clear();
     
-    // Reset lifelines
     lifelines = {
         fiftyFifty: true,
         audiencePoll: true,
@@ -137,7 +135,7 @@ function initializePrizeLadder() {
     const ladderContainer = document.getElementById('prizeLadder');
     ladderContainer.innerHTML = '<h3>💰 Prize Money</h3>';
     
-    // Display in reverse order (highest first)
+
     for (let i = prizeMoneyLadder.length - 1; i >= 0; i--) {
         const level = prizeMoneyLadder[i];
         const div = document.createElement('div');
@@ -175,11 +173,11 @@ async function loadQuestion() {
         displayQuestion(question);
     } catch (error) {
         console.log('API failed, using fallback question:', error);
-        // Use fallback question
+
         const fallbackPool = fallbackQuestions[difficulty];
         let questionToUse;
         
-        // Try to avoid repeating questions
+  
         let attempts = 0;
         do {
             const randomIndex = Math.floor(Math.random() * fallbackPool.length);
@@ -202,14 +200,13 @@ function getDifficultyLevel() {
 }
 
 async function fetchQuestionFromAPI(difficulty) {
-    // Option 1: Open Trivia Database (Free)
+
     try {
         return await fetchFromTriviaDB(difficulty);
     } catch (error) {
         console.log('Trivia DB failed:', error);
     }
-    
-    // Option 2: Quiz API (Free alternative)
+
     try {
         return await fetchFromQuizAPI(difficulty);
     } catch (error) {
@@ -221,9 +218,9 @@ async function fetchQuestionFromAPI(difficulty) {
 
 async function fetchFromTriviaDB(difficulty) {
     const categoryMap = {
-        'easy': '9',    // General Knowledge
-        'medium': '17', // Science & Nature  
-        'hard': '22'    // Geography
+        'easy': '9',    
+        'medium': '17', 
+        'hard': '22'    
     };
     
     const difficultyMap = {
@@ -245,12 +242,10 @@ async function fetchFromTriviaDB(difficulty) {
     if (data.results && data.results.length > 0) {
         const questionData = data.results[0];
         
-        // Decode HTML entities
         const question = decodeHTMLEntities(questionData.question);
         const correctAnswer = decodeHTMLEntities(questionData.correct_answer);
         const incorrectAnswers = questionData.incorrect_answers.map(answer => decodeHTMLEntities(answer));
         
-        // Shuffle options
         const options = [...incorrectAnswers, correctAnswer];
         const shuffledOptions = shuffleArray(options);
         const correctIndex = shuffledOptions.indexOf(correctAnswer);
@@ -266,7 +261,7 @@ async function fetchFromTriviaDB(difficulty) {
 }
 
 async function fetchFromQuizAPI(difficulty) {
-    // Alternative free API
+ 
     const difficultyMap = {
         'easy': 'easy',
         'medium': 'medium',
@@ -284,7 +279,6 @@ async function fetchFromQuizAPI(difficulty) {
     if (data && data.length > 0) {
         const questionData = data[0];
         
-        // Combine correct and incorrect answers
         const options = [...questionData.incorrectAnswers, questionData.correctAnswer];
         const shuffledOptions = shuffleArray(options);
         const correctIndex = shuffledOptions.indexOf(questionData.correctAnswer);
@@ -320,7 +314,7 @@ function showLoading(show) {
 }
 
 function updatePrizeLadder() {
-    // Reset all levels
+   
     for (let i = 0; i < prizeMoneyLadder.length; i++) {
         const element = document.getElementById(`prize-${i}`);
         element.className = `prize-level ${prizeMoneyLadder[i].safe ? 'safe-haven' : ''}`;
@@ -367,12 +361,10 @@ function displayQuestion(question) {
 function selectAnswer(index) {
     if (!gameActive) return;
     
-    // Remove previous selection
     document.querySelectorAll('.answer-option').forEach(opt => {
         opt.classList.remove('selected');
     });
     
-    // Add selection to clicked option
     document.getElementById(`option-${index}`).classList.add('selected');
     selectedAnswer = index;
     document.getElementById('finalAnswerBtn').disabled = false;
@@ -402,7 +394,6 @@ function useFiftyFifty() {
         }
     }
     
-    // Remove 2 incorrect options randomly
     const shuffledIncorrect = shuffleArray(incorrectOptions);
     const toRemove = shuffledIncorrect.slice(0, 2);
     
@@ -413,7 +404,7 @@ function useFiftyFifty() {
         option.style.background = 'rgba(0, 0, 0, 0.5)';
     });
     
-    // Play sound effect (you can add audio file)
+    
     console.log('50:50 lifeline used!');
 }
 
@@ -423,20 +414,17 @@ function useAudiencePoll() {
     lifelines.audiencePoll = false;
     document.getElementById('audiencePoll').classList.add('used');
     
-    // Simulate audience poll (bias towards correct answer)
     const poll = [0, 0, 0, 0];
     const correctIndex = currentQuestion.correct;
     
-    // Give correct answer 40-70% chance
     poll[correctIndex] = 40 + Math.random() * 30;
     
-    // Distribute remaining percentage among other options
     const remaining = 100 - poll[correctIndex];
     const otherIndices = [0, 1, 2, 3].filter(i => i !== correctIndex);
     
     otherIndices.forEach((index, i) => {
         if (i === otherIndices.length - 1) {
-            // Last option gets remaining percentage
+           
             poll[index] = remaining - poll.slice(0, 4).reduce((sum, val, idx) => 
                 idx !== correctIndex && idx !== index ? sum + val : sum, 0);
         } else {
@@ -444,14 +432,13 @@ function useAudiencePoll() {
         }
     });
     
-    // Ensure all percentages are positive and sum to 100
     const total = poll.reduce((sum, val) => sum + val, 0);
     poll.forEach((val, i) => poll[i] = Math.max(0, Math.round((val / total) * 100)));
     
     const labels = ['A', 'B', 'C', 'D'];
     const pollResult = labels.map((label, i) => `${label}: ${poll[i]}%`).join('\n');
     
-    alert(`📊 Audience Poll Results:\n\n${pollResult}`);
+    alert(` Audience Poll Results:\n\n${pollResult}`);
 }
 
 function usePhoneAFriend() {
@@ -464,12 +451,12 @@ function usePhoneAFriend() {
     const friendConfidence = Math.random();
     
     if (friendConfidence > 0.3) {
-        // Friend is confident (usually correct)
+        
         const suggestion = labels[currentQuestion.correct];
         const confidence = Math.round(70 + Math.random() * 20);
         alert(`📞 Your friend says: "I'm pretty sure it's option ${suggestion}. I'm ${confidence}% confident about this!"`);
     } else {
-        // Friend is unsure
+     
         const randomSuggestion = labels[Math.floor(Math.random() * 4)];
         alert(`📞 Your friend says: "I'm not really sure, but I think it might be ${randomSuggestion}. Don't rely on me too much for this one!"`);
     }
@@ -477,8 +464,7 @@ function usePhoneAFriend() {
 
 function submitAnswer() {
     if (selectedAnswer === null || !gameActive) return;
-    
-    // Confirmation dialog for dramatic effect
+  
     const confirmed = confirm(`Are you sure you want to lock in option ${['A', 'B', 'C', 'D'][selectedAnswer]}?\n\nThis is your FINAL ANSWER!`);
     
     if (!confirmed) return;
